@@ -1,0 +1,6 @@
+# Sample requirements.txt with intentionally outdated/vulnerable packages for testing Zero-Day Radar.
+requests==2.25.0
+flask==1.0.2
+django==2.2.0
+pillow==8.1.0
+pyyaml==5.3.1

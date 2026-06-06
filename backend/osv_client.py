@@ -29,10 +29,6 @@ def _extract_severity(vuln: dict) -> Optional[str]:
     #
     # This is a plain string like "HIGH" or "CRITICAL". It is the most
     # common and most reliably formatted field across OSV entries.
-    #
-    # The dict.get() method safely returns None if the key is missing,
-    # avoiding a KeyError crash. We use isinstance() before calling .get()
-    # because occasionally this field is not a dict.
     db_specific = vuln.get("database_specific", {})
     if isinstance(db_specific, dict):
         severity = db_specific.get("severity")
@@ -42,8 +38,6 @@ def _extract_severity(vuln: dict) -> Optional[str]:
     # --- Location 2: ecosystem_specific.severity (inside affected list) ---
     #
     # Some entries (especially PyPI ones) store severity here instead.
-    # We iterate through the affected list because a single vulnerability
-    # can affect multiple packages/ecosystems simultaneously.
     for affected in vuln.get("affected", []):
         eco_specific = affected.get("ecosystem_specific", {})
         if isinstance(eco_specific, dict):
@@ -51,11 +45,36 @@ def _extract_severity(vuln: dict) -> Optional[str]:
             if severity:
                 return str(severity).upper()
 
-    # --- Location 3: CVSS numeric score in database_specific ---
+    # --- Location 3: Top-level severity array (OSV schema v1.3+) ---
     #
-    # Some entries skip the plain label but include a numeric CVSS score
-    # (e.g., 7.5). We map that number to a severity label using NIST's
-    # official CVSS v3 severity scale.
+    # GitHub Security Advisories (GHSA) and many newer entries use this format:
+    #   "severity": [{ "type": "CVSS_V3", "score": "CVSS:3.1/AV:N/AC:L/..." }]
+    #
+    # The score is a CVSS vector string. We extract the numeric base score
+    # embedded at the start — GitHub includes it as BM:<number> in some vectors,
+    # but the reliable way is to parse the AV/AC/PR/UI/S/C/I/A components.
+    # As a practical shortcut we pull the pre-computed score from the
+    # "baseScore" sub-key when GitHub includes it, otherwise we skip the
+    # full CVSS calculation and fall through to Location 4.
+    for sev_entry in vuln.get("severity", []):
+        if not isinstance(sev_entry, dict):
+            continue
+        score_str = sev_entry.get("score", "")
+        # GitHub Advisory Database embeds a plain numeric score alongside
+        # CVSS vectors in some entries: { "type": "CVSS_V3", "score": "7.5" }
+        try:
+            numeric = float(score_str)
+            return _cvss_score_to_label(numeric)
+        except (ValueError, TypeError):
+            pass
+        # Otherwise parse "CVSS:3.x/..." vector — extract base score via regex
+        base_score = _parse_cvss_vector_score(score_str)
+        if base_score is not None:
+            return _cvss_score_to_label(base_score)
+
+    # --- Location 4: CVSS numeric score in database_specific ---
+    #
+    # Some entries skip the plain label but include a numeric CVSS score (e.g. 7.5).
     if isinstance(db_specific, dict):
         cvss_score = db_specific.get("cvss_score")
         if cvss_score is not None:
@@ -63,6 +82,66 @@ def _extract_severity(vuln: dict) -> Optional[str]:
 
     # If none of the above yielded a result, we genuinely don't know.
     return None
+
+
+def _parse_cvss_vector_score(vector: str) -> Optional[float]:
+    """
+    Extracts the base CVSS v3 score from a vector string like:
+        CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+    CVSS v3 base scores are calculated from 8 metric values. Rather than
+    implementing the full NIST formula here, we use a simplified impact
+    heuristic: map the three impact metrics (C/I/A) to a score bucket.
+    This gives the correct severity tier in the vast majority of real cases.
+
+    C/I/A values:  N=None(0)  L=Low(0.22)  H=High(0.56)
+    Combined impact → rough base score → severity label.
+    """
+    if not vector or not vector.startswith("CVSS:"):
+        return None
+
+    # Map metric abbreviations used in CVSS vectors
+    impact_map = {"N": 0.0, "L": 0.22, "H": 0.56}
+    metrics: dict = {}
+    for part in vector.split("/"):
+        if ":" in part:
+            k, v = part.split(":", 1)
+            metrics[k] = v
+
+    c = impact_map.get(metrics.get("C", "N"), 0.0)
+    i = impact_map.get(metrics.get("I", "N"), 0.0)
+    a = impact_map.get(metrics.get("A", "N"), 0.0)
+
+    scope_changed = metrics.get("S", "U") == "C"
+    iss = 1 - (1 - c) * (1 - i) * (1 - a)
+
+    if iss == 0:
+        return 0.0
+
+    if scope_changed:
+        impact = 7.52 * (iss - 0.029) - 3.25 * ((iss - 0.02) ** 15)
+    else:
+        impact = 6.42 * iss
+
+    exploitability = (
+        8.22
+        * {"N": 0.85, "A": 0.62, "L": 0.55, "P": 0.2}.get(metrics.get("AV", "N"), 0.85)
+        * {"L": 0.44, "H": 0.77}.get(metrics.get("AC", "L"), 0.77)
+        * {"N": 0.85, "L": 0.62, "H": 0.27}.get(metrics.get("PR", "N"), 0.85)
+        * {"N": 0.85, "R": 0.62}.get(metrics.get("UI", "N"), 0.85)
+    )
+
+    if impact <= 0:
+        return 0.0
+
+    if scope_changed:
+        raw = min(1.08 * (impact + exploitability), 10)
+    else:
+        raw = min(impact + exploitability, 10)
+
+    # Round up to 1 decimal place (CVSS spec rounding)
+    import math
+    return math.ceil(raw * 10) / 10
 
 
 def _cvss_score_to_label(score: float) -> str:

@@ -1,0 +1,357 @@
+/* ── Tailwind v4 ─────────────────────────────────────────────────────────── */
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Map shadcn CSS vars → Tailwind theme tokens */
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background:         var(--background);
+  --color-foreground:         var(--foreground);
+  --color-card:               var(--card);
+  --color-card-foreground:    var(--card-foreground);
+  --color-primary:            var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary:          var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted:              var(--muted);
+  --color-muted-foreground:   var(--muted-foreground);
+  --color-accent:             var(--accent);
+  --color-accent-foreground:  var(--accent-foreground);
+  --color-destructive:        var(--destructive);
+  --color-border:             var(--border);
+  --color-input:              var(--input);
+  --color-ring:               var(--ring);
+}
+
+/* ── Light theme (shadcn tokens) ─────────────────────────────────────────── */
+:root {
+  --radius: 0.625rem;
+  --background:             oklch(1 0 0);
+  --foreground:             oklch(0.145 0 0);
+  --card:                   oklch(1 0 0);
+  --card-foreground:        oklch(0.145 0 0);
+  --primary:                oklch(0.205 0 0);
+  --primary-foreground:     oklch(0.985 0 0);
+  --secondary:              oklch(0.97 0 0);
+  --secondary-foreground:   oklch(0.205 0 0);
+  --muted:                  oklch(0.97 0 0);
+  --muted-foreground:       oklch(0.556 0 0);
+  --accent:                 oklch(0.97 0 0);
+  --accent-foreground:      oklch(0.205 0 0);
+  --destructive:            oklch(0.577 0.245 27.325);
+  --border:                 oklch(0.922 0 0);
+  --input:                  oklch(0.922 0 0);
+  --ring:                   oklch(0.708 0 0);
+}
+
+/* ── Global base ─────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  * { @apply border-border outline-ring/50; }
+  body {
+    @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  a { text-decoration: none; }
+  a:hover { text-decoration: underline; }
+}
+
+/* ── Gradient animation ──────────────────────────────────────────────────── */
+@layer utilities {
+  @keyframes gradient-xy {
+    0%, 100% { background-position: 0% 50%;   background-size: 400% 400%; }
+    50%       { background-position: 100% 50%; background-size: 400% 400%; }
+  }
+  .animate-gradient-xy {
+    animation: gradient-xy 15s ease infinite;
+    background-size: 400% 400%;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Results Panel — scoped dark theme
+   All CSS vars below ONLY apply inside .results-panel, preventing conflicts
+   with Tailwind's light-theme --border / --accent tokens above.
+   ══════════════════════════════════════════════════════════════════════════ */
+.results-panel {
+  background: #0d1117;
+
+  /* Dark design tokens scoped here */
+  --border:        #30363d;
+  --border-subtle: #21262d;
+  --bg-surface:    #161b22;
+  --bg-raised:     #1c2128;
+  --bg-hover:      #21262d;
+  --text-primary:  #e6edf3;
+  --text-muted:    #8b949e;
+  --text-faint:    #484f58;
+  --accent:        #58a6ff;
+  --accent-dim:    #1f3d5c;
+  --green:         #3fb950;
+  --green-dim:     #0f2b0f;
+  --red:           #f85149;
+  --red-dim:       #3d0000;
+  --orange:        #f0883e;
+
+  /* Severity colours */
+  --sev-critical:     #ff4444;
+  --sev-critical-bg:  #2d0000;
+  --sev-critical-bdr: #7f0000;
+  --sev-high:         #f97316;
+  --sev-high-bg:      #2d1200;
+  --sev-high-bdr:     #7c2d12;
+  --sev-medium:       #eab308;
+  --sev-medium-bg:    #2b1f00;
+  --sev-medium-bdr:   #713f12;
+  --sev-low:          #58a6ff;
+  --sev-low-bg:       #001a3d;
+  --sev-low-bdr:      #1e3a5f;
+  --sev-unknown:      #8b949e;
+  --sev-unknown-bg:   #21262d;
+  --sev-unknown-bdr:  #30363d;
+
+  /* Layout tokens */
+  --zdr-radius:    8px;
+  --zdr-radius-sm: 4px;
+  --transition:    150ms ease;
+}
+
+/* ── Results section ─────────────────────────────────────────────────────── */
+.results-section { animation: fadeUp 0.3s ease both; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.scan-meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+}
+
+/* ── Summary bar ─────────────────────────────────────────────────────────── */
+.summary-bar {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--zdr-radius);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.summary-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.summary-chips { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--zdr-radius-sm);
+  padding: 12px 24px;
+  min-width: 100px;
+  flex: 1;
+}
+
+.chip-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.chip-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.chip--total .chip-value { color: var(--text-primary); }
+.chip--vuln  .chip-value { color: var(--red); }
+.chip--safe  .chip-value { color: var(--green); }
+
+/* ── All clear ───────────────────────────────────────────────────────────── */
+.all-clear {
+  text-align: center;
+  padding: 48px 24px;
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  border-radius: var(--zdr-radius);
+  margin-bottom: 20px;
+}
+
+.all-clear-icon  { color: var(--green); margin-bottom: 12px; }
+.all-clear-title { font-size: 1.25rem; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+.all-clear-desc  { font-size: 0.875rem; color: var(--text-muted); }
+
+/* ── Results list ────────────────────────────────────────────────────────── */
+.results-list { display: flex; flex-direction: column; gap: 12px; }
+
+/* ── Vulnerable card ─────────────────────────────────────────────────────── */
+.result-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--zdr-radius);
+  overflow: hidden;
+}
+
+.result-card--vulnerable { border-left: 3px solid var(--red); }
+
+.result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  flex-wrap: wrap;
+}
+
+.result-pkg  { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.result-meta { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.vuln-count  { font-size: 0.78rem; color: var(--text-muted); }
+
+.pkg-name {
+  font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.pkg-version {
+  font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--zdr-radius-sm);
+  padding: 1px 7px;
+}
+
+.pkg-ecosystem {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+
+.pkg-ecosystem--pypi { background: #1a2b4a; color: #4b8bbe; border: 1px solid #2a4070; }
+.pkg-ecosystem--npm  { background: #2b1a00; color: #cc8800; border: 1px solid #4a3000; }
+
+/* ── Severity badges ─────────────────────────────────────────────────────── */
+.severity-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: var(--zdr-radius-sm);
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.severity-badge--critical { color: var(--sev-critical); background: var(--sev-critical-bg); border-color: var(--sev-critical-bdr); }
+.severity-badge--high     { color: var(--sev-high);     background: var(--sev-high-bg);     border-color: var(--sev-high-bdr); }
+.severity-badge--medium   { color: var(--sev-medium);   background: var(--sev-medium-bg);   border-color: var(--sev-medium-bdr); }
+.severity-badge--low      { color: var(--sev-low);      background: var(--sev-low-bg);      border-color: var(--sev-low-bdr); }
+.severity-badge--unknown,
+.severity-badge--none     { color: var(--sev-unknown);  background: var(--sev-unknown-bg);  border-color: var(--sev-unknown-bdr); }
+
+/* ── Vuln items ──────────────────────────────────────────────────────────── */
+.result-body { border-top: 1px solid var(--border-subtle); padding: 4px 0; }
+
+.vuln-item { padding: 14px 20px; border-bottom: 1px solid var(--border-subtle); }
+.vuln-item:last-child { border-bottom: none; }
+
+.vuln-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+
+.vuln-id {
+  font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 0.8125rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.vuln-summary { font-size: 0.875rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 8px; }
+
+.vuln-fix       { display: flex; align-items: center; gap: 8px; font-size: 0.8125rem; }
+.fix-label      { color: var(--text-faint); }
+.vuln-fix--none { color: var(--text-faint); font-style: italic; }
+
+.fix-version {
+  color: var(--green);
+  font-family: monospace;
+  font-weight: 600;
+  background: var(--green-dim);
+  border: 1px solid #1a4a1a;
+  border-radius: var(--zdr-radius-sm);
+  padding: 1px 7px;
+}
+
+/* ── Safe section ────────────────────────────────────────────────────────── */
+.safe-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: var(--zdr-radius);
+  overflow: hidden;
+}
+
+.safe-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--transition), color var(--transition);
+}
+
+.safe-toggle:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+.safe-toggle-icon { color: var(--green); display: flex; align-items: center; flex-shrink: 0; }
+
+.safe-list { border-top: 1px solid var(--border-subtle); padding: 4px 0; }
+
+.safe-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.safe-row:last-child { border-bottom: none; }
+.safe-check { color: var(--green); flex-shrink: 0; }

@@ -18,14 +18,21 @@ app = FastAPI(
 # ---------------------------------------------------------------------------
 # CORS middleware
 # ---------------------------------------------------------------------------
-# Allows the frontend (served on a different port) to call this API.
-# In production, replace "*" with your exact frontend URL.
+# Only the local Vite dev server and the built preview are allowed.
+# Add your deployed frontend URL here when you go to production.
+
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:4173",   # vite preview
+    "http://127.0.0.1:4173",
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_methods=["GET", "POST"],   # only what the app actually uses
+    allow_headers=["Content-Type"],
 )
 
 # ---------------------------------------------------------------------------
@@ -52,7 +59,14 @@ async def scan_file(file: UploadFile = File(...)):
     """
 
     # --- Step 1: Read the file bytes and decode to text ---
+    MAX_BYTES = 512 * 1024  # 512 KB — far more than any real manifest needs
     content_bytes = await file.read()
+    if len(content_bytes) > MAX_BYTES:
+        raise HTTPException(
+            status_code=413,
+            detail="File too large. Maximum allowed size is 512 KB.",
+        )
+
     try:
         content = content_bytes.decode("utf-8")
     except UnicodeDecodeError:
@@ -88,6 +102,13 @@ async def scan_file(file: UploadFile = File(...)):
         raise HTTPException(
             status_code=422,
             detail="No dependencies were found in the uploaded file.",
+        )
+
+    MAX_DEPS = 300  # prevents runaway OSV batch queries
+    if len(deps) > MAX_DEPS:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Too many dependencies ({len(deps)} found). Maximum supported is {MAX_DEPS}.",
         )
 
     # --- Step 3: Query OSV.dev ---

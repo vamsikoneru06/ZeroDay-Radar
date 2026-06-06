@@ -24,8 +24,13 @@ build/
 Thumbs.db
 *.lnk
 
-# Node (if frontend tooling is added later)
+# Node / frontend build
 node_modules/
+frontend/dist/
+frontend/tsconfig.tsbuildinfo
+
+# Claude Code local settings — contains machine-specific paths, never commit
+.claude/
 
 # Pytest / coverage
 .pytest_cache/

@@ -28,12 +28,12 @@
   --color-ring:               var(--ring);
 
   /* Brand accent — the one colour used for emphasis. Change it here. */
-  --color-brand-50:  #eef2f8;
-  --color-brand-200: #c3d0e4;
-  --color-brand-300: #9db1d1;
-  --color-brand-500: #2c5697;
-  --color-brand-600: #24498a;
-  --color-brand-700: #1b3a6b;
+  --color-brand-50:  #eef1fa;
+  --color-brand-200: #c4cdec;
+  --color-brand-300: #a0addd;
+  --color-brand-500: #1a1aad;
+  --color-brand-600: #0d0d9c;
+  --color-brand-700: #00008b;
 }
 
 /* ── Light theme (shadcn tokens) ─────────────────────────────────────────── */

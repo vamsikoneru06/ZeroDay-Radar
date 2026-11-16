@@ -157,7 +157,7 @@ export default function HeroSection({ children }: HeroSectionProps) {
           width: 700,
           height: 700,
           background:
-            "radial-gradient(circle, rgba(36,73,138,0.08) 0%, rgba(36,73,138,0.03) 40%, transparent 70%)",
+            "radial-gradient(circle, rgba(0,0,139,0.08) 0%, rgba(0,0,139,0.03) 40%, transparent 70%)",
           borderRadius: "50%",
         }}
       />

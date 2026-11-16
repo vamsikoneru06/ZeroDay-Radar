@@ -226,7 +226,7 @@ const GlassUploader: React.FC<GlassUploaderProps> = ({
                   <motion.div
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                     className="absolute inset-0 rounded-2xl pointer-events-none"
-                    style={{ boxShadow: "inset 0 0 20px rgba(36,73,138,0.06)" }}
+                    style={{ boxShadow: "inset 0 0 20px rgba(0,0,139,0.06)" }}
                   />
                 )}
                 <input

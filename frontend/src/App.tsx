@@ -61,7 +61,7 @@ export default function App() {
                 style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.7) 0%, transparent 60%)" }}
               />
               <span className="relative z-10 text-lg text-brand-600 select-none leading-none"
-                style={{ filter: "drop-shadow(0 0 5px rgba(36,73,138,0.35))" }}
+                style={{ filter: "drop-shadow(0 0 5px rgba(0,0,139,0.35))" }}
               >◈</span>
             </div>
 

@@ -111,7 +111,7 @@ function ScrollProgressBar({ containerRef }: { containerRef: React.RefObject<HTM
   return (
     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-100 overflow-hidden">
       <motion.div
-        className="h-full bg-gradient-to-r from-blue-500 via-sky-400 to-cyan-400 origin-left"
+        className="h-full bg-brand-500 origin-left"
         style={{ scaleX }}
       />
     </div>

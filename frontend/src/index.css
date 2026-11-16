@@ -26,6 +26,14 @@
   --color-border:             var(--border);
   --color-input:              var(--input);
   --color-ring:               var(--ring);
+
+  /* Brand accent — the one colour used for emphasis. Change it here. */
+  --color-brand-50:  #eef8f3;
+  --color-brand-200: #bfe3d2;
+  --color-brand-300: #93cfb5;
+  --color-brand-500: #1f9d6e;
+  --color-brand-600: #14805a;
+  --color-brand-700: #0d6446;
 }
 
 /* ── Light theme (shadcn tokens) ─────────────────────────────────────────── */
@@ -64,21 +72,21 @@
 }
 
 /* ── Custom scrollbar — slim glass pill ──────────────────────────────────── */
-/* WebKit/Blink: transparent track, inset pill thumb that turns blue-cyan on hover. */
+/* WebKit/Blink: transparent track, inset grey pill; darker on hover, brand colour while dragging. */
 ::-webkit-scrollbar { width: 12px; height: 12px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(148,163,184,0.55), rgba(100,116,139,0.45));
+  background: rgba(100,116,139,0.45);
   background-clip: padding-box;
   border: 3px solid transparent;   /* insets the pill from the window edge */
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(96,165,250,0.85), rgba(34,211,238,0.8));
+  background: rgba(71,85,105,0.7);
   background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(180deg, rgba(59,130,246,0.95), rgba(6,182,212,0.95));
+  background: var(--color-brand-600);
   background-clip: padding-box;
 }
 /* Firefox: only the standard properties exist. Scoped so they don't switch

@@ -66,7 +66,7 @@ function FloatingBadge({ name, version, isVuln, posX, posY, depth, delay, smooth
 function RadarPing({ delay }: { delay: number }) {
   return (
     <motion.div
-      className="absolute rounded-full border border-sky-400/15 pointer-events-none"
+      className="absolute rounded-full border border-brand-500/15 pointer-events-none"
       style={{
         width: 160,
         height: 160,
@@ -141,7 +141,7 @@ export default function HeroSection({ children }: HeroSectionProps) {
       className="relative overflow-hidden bg-white"
     >
       {/* ── Background gradient ──────────────────────────────────────────── */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-cyan-50 animate-gradient-xy pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-brand-50 animate-gradient-xy pointer-events-none" />
 
       {/* ── Soft vignette ────────────────────────────────────────────────── */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,transparent_60%,rgba(255,255,255,0.8)_100%)] pointer-events-none" />
@@ -157,7 +157,7 @@ export default function HeroSection({ children }: HeroSectionProps) {
           width: 700,
           height: 700,
           background:
-            "radial-gradient(circle, rgba(59,130,246,0.10) 0%, rgba(34,211,238,0.06) 40%, transparent 70%)",
+            "radial-gradient(circle, rgba(31,157,110,0.08) 0%, rgba(31,157,110,0.03) 40%, transparent 70%)",
           borderRadius: "50%",
         }}
       />
@@ -190,8 +190,8 @@ export default function HeroSection({ children }: HeroSectionProps) {
               transition={{ duration: 0.7, ease: "easeOut" }}
             >
               {/* Pill badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-200/80 bg-blue-50/80 text-blue-600 text-xs font-semibold mb-6 backdrop-blur-sm">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-200/80 bg-brand-50/80 text-brand-700 text-xs font-semibold mb-6 backdrop-blur-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse" />
                 Powered by OSV.dev
               </div>
 
@@ -199,7 +199,7 @@ export default function HeroSection({ children }: HeroSectionProps) {
               <h2 className="text-4xl md:text-[3.75rem] font-extrabold text-gray-900 tracking-tight leading-none mb-5">
                 Scan Before
                 <br />
-                <span className="bg-gradient-to-r from-blue-700 via-blue-500 to-cyan-600 bg-clip-text text-transparent">
+                <span className="text-brand-700">
                   You Ship
                 </span>
               </h2>

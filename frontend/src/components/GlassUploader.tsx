@@ -216,17 +216,17 @@ const GlassUploader: React.FC<GlassUploaderProps> = ({
                   "relative rounded-2xl border-2 border-dashed p-7 flex flex-col items-center gap-2 transition-all duration-200",
                   isReady ? "cursor-pointer" : "cursor-not-allowed",
                   isDragging
-                    ? "border-blue-300 bg-blue-50/60"
+                    ? "border-brand-300 bg-brand-50/60"
                     : isReady
                     ? "border-gray-200 hover:border-gray-300 hover:bg-gray-50/60"
-                    : "border-gray-200 hover:border-sky-300 hover:bg-sky-50/30",
+                    : "border-gray-200 hover:border-brand-300 hover:bg-brand-50/30",
                 )}
               >
                 {isDragging && (
                   <motion.div
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                     className="absolute inset-0 rounded-2xl pointer-events-none"
-                    style={{ boxShadow: "inset 0 0 20px rgba(59,130,246,0.06)" }}
+                    style={{ boxShadow: "inset 0 0 20px rgba(31,157,110,0.06)" }}
                   />
                 )}
                 <input
@@ -234,7 +234,7 @@ const GlassUploader: React.FC<GlassUploaderProps> = ({
                   onChange={e => { const f = e.target.files?.[0]; if (f) pick(f) }}
                 />
                 <LiquidIconBox size={58} className="pointer-events-none mb-1">
-                  <UploadCloud className={cn("w-7 h-7", isReady ? "text-gray-400" : "text-sky-400")} />
+                  <UploadCloud className={cn("w-7 h-7", isReady ? "text-gray-400" : "text-brand-500")} />
                 </LiquidIconBox>
                 <p className="text-sm font-semibold text-gray-700">Drop your file here</p>
                 <p className="text-xs text-gray-400">or click to browse</p>
@@ -259,7 +259,7 @@ const GlassUploader: React.FC<GlassUploaderProps> = ({
                     className="absolute inset-0 flex items-center justify-center rounded-2xl pointer-events-none z-10"
                     style={{ background: "rgba(238,242,255,0.92)", backdropFilter: "blur(4px)" }}
                   >
-                    <div className="flex flex-col items-center gap-2 text-blue-600">
+                    <div className="flex flex-col items-center gap-2 text-brand-600">
                       <MousePointerClick size={20} />
                       <span className="text-xs font-semibold">Scroll down to unlock</span>
                     </div>
@@ -334,7 +334,7 @@ const GlassUploader: React.FC<GlassUploaderProps> = ({
                         <span className="text-gray-400">{fmt(scanned.file.size)}</span>
                         <span className="text-gray-300">·</span>
                         <span className={cn({
-                          "text-blue-500":   scanned.status === "scanning",
+                          "text-brand-600":  scanned.status === "scanning",
                           "text-emerald-500": scanned.status === "completed",
                           "text-red-500":    scanned.status === "error",
                         })}>
@@ -346,7 +346,7 @@ const GlassUploader: React.FC<GlassUploaderProps> = ({
                       {scanned.status === "scanning" && (
                         <div className="mt-1.5 h-1 w-full rounded-full bg-gray-100 overflow-hidden">
                           <motion.div
-                            className="h-full rounded-full bg-gradient-to-r from-blue-400 to-cyan-400"
+                            className="h-full rounded-full bg-brand-500"
                             animate={{ width: `${scanned.progress}%` }}
                             transition={{ duration: 0.3 }}
                           />

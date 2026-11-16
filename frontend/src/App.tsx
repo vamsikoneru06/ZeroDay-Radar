@@ -60,8 +60,8 @@ export default function App() {
               <div className="absolute inset-0 rounded-xl pointer-events-none"
                 style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.7) 0%, transparent 60%)" }}
               />
-              <span className="relative z-10 text-lg text-blue-500 select-none leading-none"
-                style={{ filter: "drop-shadow(0 0 5px rgba(88,166,255,0.5))" }}
+              <span className="relative z-10 text-lg text-brand-600 select-none leading-none"
+                style={{ filter: "drop-shadow(0 0 5px rgba(31,157,110,0.35))" }}
               >◈</span>
             </div>
 
@@ -151,7 +151,7 @@ export default function App() {
           href="https://osv.dev"
           target="_blank"
           rel="noopener"
-          className="text-blue-400 hover:underline"
+          className="text-brand-600 hover:underline"
         >
           OSV.dev
         </a>{" "}

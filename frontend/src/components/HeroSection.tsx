@@ -66,7 +66,7 @@ function FloatingBadge({ name, version, isVuln, posX, posY, depth, delay, smooth
 function RadarPing({ delay }: { delay: number }) {
   return (
     <motion.div
-      className="absolute rounded-full border border-indigo-400/15 pointer-events-none"
+      className="absolute rounded-full border border-sky-400/15 pointer-events-none"
       style={{
         width: 160,
         height: 160,
@@ -141,7 +141,7 @@ export default function HeroSection({ children }: HeroSectionProps) {
       className="relative overflow-hidden bg-white"
     >
       {/* ── Background gradient ──────────────────────────────────────────── */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-violet-50 animate-gradient-xy pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-cyan-50 animate-gradient-xy pointer-events-none" />
 
       {/* ── Soft vignette ────────────────────────────────────────────────── */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,transparent_60%,rgba(255,255,255,0.8)_100%)] pointer-events-none" />
@@ -157,7 +157,7 @@ export default function HeroSection({ children }: HeroSectionProps) {
           width: 700,
           height: 700,
           background:
-            "radial-gradient(circle, rgba(99,102,241,0.10) 0%, rgba(139,92,246,0.06) 40%, transparent 70%)",
+            "radial-gradient(circle, rgba(59,130,246,0.10) 0%, rgba(34,211,238,0.06) 40%, transparent 70%)",
           borderRadius: "50%",
         }}
       />
@@ -199,7 +199,7 @@ export default function HeroSection({ children }: HeroSectionProps) {
               <h2 className="text-4xl md:text-[3.75rem] font-extrabold text-gray-900 tracking-tight leading-none mb-5">
                 Scan Before
                 <br />
-                <span className="bg-gradient-to-r from-blue-600 via-indigo-500 to-violet-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-blue-700 via-blue-500 to-cyan-600 bg-clip-text text-transparent">
                   You Ship
                 </span>
               </h2>

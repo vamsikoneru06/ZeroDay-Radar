@@ -219,7 +219,7 @@ const GlassUploader: React.FC<GlassUploaderProps> = ({
                     ? "border-blue-300 bg-blue-50/60"
                     : isReady
                     ? "border-gray-200 hover:border-gray-300 hover:bg-gray-50/60"
-                    : "border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/30",
+                    : "border-gray-200 hover:border-sky-300 hover:bg-sky-50/30",
                 )}
               >
                 {isDragging && (
@@ -234,7 +234,7 @@ const GlassUploader: React.FC<GlassUploaderProps> = ({
                   onChange={e => { const f = e.target.files?.[0]; if (f) pick(f) }}
                 />
                 <LiquidIconBox size={58} className="pointer-events-none mb-1">
-                  <UploadCloud className={cn("w-7 h-7", isReady ? "text-gray-400" : "text-indigo-400")} />
+                  <UploadCloud className={cn("w-7 h-7", isReady ? "text-gray-400" : "text-sky-400")} />
                 </LiquidIconBox>
                 <p className="text-sm font-semibold text-gray-700">Drop your file here</p>
                 <p className="text-xs text-gray-400">or click to browse</p>
@@ -259,7 +259,7 @@ const GlassUploader: React.FC<GlassUploaderProps> = ({
                     className="absolute inset-0 flex items-center justify-center rounded-2xl pointer-events-none z-10"
                     style={{ background: "rgba(238,242,255,0.92)", backdropFilter: "blur(4px)" }}
                   >
-                    <div className="flex flex-col items-center gap-2 text-indigo-600">
+                    <div className="flex flex-col items-center gap-2 text-blue-600">
                       <MousePointerClick size={20} />
                       <span className="text-xs font-semibold">Scroll down to unlock</span>
                     </div>
@@ -346,7 +346,7 @@ const GlassUploader: React.FC<GlassUploaderProps> = ({
                       {scanned.status === "scanning" && (
                         <div className="mt-1.5 h-1 w-full rounded-full bg-gray-100 overflow-hidden">
                           <motion.div
-                            className="h-full rounded-full bg-gradient-to-r from-blue-400 to-indigo-400"
+                            className="h-full rounded-full bg-gradient-to-r from-blue-400 to-cyan-400"
                             animate={{ width: `${scanned.progress}%` }}
                             transition={{ duration: 0.3 }}
                           />

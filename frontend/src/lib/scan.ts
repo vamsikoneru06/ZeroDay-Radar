@@ -183,6 +183,49 @@ async function fetchAdvisories(ids: string[], onProgress?: (fraction: number) =>
   return out
 }
 
+// ── Duplicate advisories ──────────────────────────────────────────────────────
+// OSV returns the same vulnerability once per source database (for example a
+// GHSA record and a PYSEC record that both alias one CVE). Records linked
+// through `aliases` are grouped (union-find) and reported as one finding.
+
+function groupByAlias(ids: string[], advisories: Map<string, any>): string[][] {
+  const parent = new Map<string, string>()
+  const find = (x: string): string => {
+    const p = parent.get(x)
+    if (p === undefined || p === x) return x
+    const root = find(p)
+    parent.set(x, root)
+    return root
+  }
+  for (const id of ids)
+    for (const alias of advisories.get(id)?.aliases ?? []) parent.set(find(alias), find(id))
+
+  const groups = new Map<string, string[]>()
+  for (const id of ids) {
+    const root = find(id)
+    groups.set(root, [...(groups.get(root) ?? []), id])
+  }
+  return [...groups.values()]
+}
+
+function mergeGroup(ids: string[], advisories: Map<string, any>, dep: Dependency): Vulnerability {
+  // Lead with a record that has a proper title; fill gaps from its duplicates.
+  const id = ids.find(i => advisories.get(i)?.summary) ?? ids[0]
+  const v = advisories.get(id)
+  if (!v) return { id, summary: "Details could not be loaded from OSV.dev.", severity: null, fixed_version: null }
+
+  const records = ids.map(i => advisories.get(i)).filter(Boolean)
+  const severities = records.map(extractSeverity)
+  return {
+    id,
+    summary: String(v.summary || v.details || "No description available.").slice(0, 300),
+    // Sources can disagree; report the highest rating any of them gives.
+    severity: LABELS.find(l => severities.includes(l)) ?? null,
+    fixed_version:
+      extractFixedVersion(v, dep) ?? records.map(r => extractFixedVersion(r, dep)).find(Boolean) ?? null,
+  }
+}
+
 // ── Public entry point ────────────────────────────────────────────────────────
 
 /** onProgress receives 0–1 as advisory details are loaded. */
@@ -214,16 +257,7 @@ export async function scanFile(file: File, onProgress?: (fraction: number) => vo
   const advisories = await fetchAdvisories([...new Set(idsPerDep.flat())], onProgress)
 
   const results: DependencyResult[] = queryable.map((dep, i) => {
-    const vulnerabilities: Vulnerability[] = idsPerDep[i].map(id => {
-      const v = advisories.get(id)
-      if (!v) return { id, summary: "Details could not be loaded from OSV.dev.", severity: null, fixed_version: null }
-      return {
-        id,
-        summary: String(v.summary || v.details || "No description available.").slice(0, 300),
-        severity: extractSeverity(v),
-        fixed_version: extractFixedVersion(v, dep),
-      }
-    })
+    const vulnerabilities = groupByAlias(idsPerDep[i], advisories).map(ids => mergeGroup(ids, advisories, dep))
     return { dependency: dep, vulnerabilities, is_vulnerable: vulnerabilities.length > 0 }
   })
   for (const dep of unqueryable) results.push({ dependency: dep, vulnerabilities: [], is_vulnerable: false })

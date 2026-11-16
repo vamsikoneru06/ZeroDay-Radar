@@ -12,6 +12,8 @@
 
 *Upload a dependency file. Get a full CVE report in seconds.*
 
+**[Live demo → vamsikoneru06.github.io/ZeroDay-Radar](https://vamsikoneru06.github.io/ZeroDay-Radar/)** — runs entirely in the browser, no backend needed.
+
 </div>
 
 ---

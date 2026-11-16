@@ -1,11 +1,12 @@
 "use client"
 
-import React, { useRef, useState, useEffect } from "react"
+import React, { useRef, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { UploadCloud, X, FileText, CheckCircle2, AlertTriangle, ScanSearch, MousePointerClick } from "lucide-react"
 import { LiquidButton } from "@/components/ui/liquid-glass-button"
 import { useUploadReady } from "@/components/HeroSection"
 import { cn } from "@/lib/utils"
+import { scanFile } from "@/lib/scan"
 import type { ScanData } from "@/types"
 
 // ── SVG distortion filter ─────────────────────────────────────────────────────
@@ -116,14 +117,13 @@ interface ScannedFile {
 interface GlassUploaderProps {
   onScanComplete: (data: ScanData) => void
   onScanError:    (message: string) => void
-  apiBase?: string
 }
 
 const VALID = ["requirements.txt", "package.json"]
 
 // ── Component ─────────────────────────────────────────────────────────────────
 const GlassUploader: React.FC<GlassUploaderProps> = ({
-  onScanComplete, onScanError, apiBase = "http://127.0.0.1:8080",
+  onScanComplete, onScanError,
 }) => {
   const { isReady, scrollToCard } = useUploadReady()
 
@@ -140,14 +140,6 @@ const GlassUploader: React.FC<GlassUploaderProps> = ({
     setTimeout(() => setShowHint(false), 2000)
   }
 
-  useEffect(() => {
-    if (!scanned || scanned.status !== "scanning" || scanned.progress >= 90) return
-    const t = setInterval(() =>
-      setScanned(p => p?.status === "scanning" && p.progress < 90
-        ? { ...p, progress: Math.min(p.progress + 7, 90) } : p), 280)
-    return () => clearInterval(t)
-  }, [scanned])
-
   function pick(file: File) {
     if (!VALID.includes(file.name)) {
       onScanError(`"${file.name}" is not supported. Upload requirements.txt or package.json.`)
@@ -163,20 +155,15 @@ const GlassUploader: React.FC<GlassUploaderProps> = ({
     }
     setScanned(entry); setPendingFile(null)
 
-    const fd = new FormData()
-    fd.append("file", pendingFile)
     try {
-      const res  = await fetch(`${apiBase}/scan`, { method: "POST", body: fd })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.detail || `Error ${res.status}`)
+      // First 10% covers parsing + the batch lookup; the rest tracks advisory details.
+      const data = await scanFile(pendingFile, f =>
+        setScanned(p => p ? { ...p, progress: Math.round(10 + f * 90) } : p))
       setScanned(p => p ? { ...p, progress: 100, status: "completed" } : p)
       onScanComplete(data)
     } catch (err) {
-      const msg = err instanceof TypeError
-        ? "Can't reach backend. Start uvicorn on port 8080."
-        : (err as Error).message
       setScanned(p => p ? { ...p, status: "error" } : p)
-      onScanError(msg)
+      onScanError((err as Error).message)
     }
   }
 
